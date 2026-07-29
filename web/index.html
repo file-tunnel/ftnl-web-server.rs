@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#0c1220">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>Send files · File Tunnel</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="/assets/app.css">
+    <script src="/config.js" defer></script>
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="brand" aria-label="File Tunnel">
+        <span class="mark" aria-hidden="true">↗</span>
+        <span>File Tunnel</span>
+      </header>
+
+      <section class="card" aria-labelledby="title">
+        <div class="eyebrow" id="connection">Secure connection</div>
+        <h1 id="title">Send files to your other device</h1>
+        <p id="intro">Choose photos or files from this phone. Keep this page open until every transfer is complete.</p>
+
+        <div id="error" class="notice error" role="alert" hidden></div>
+
+        <label class="picker" id="picker">
+          <input id="files" type="file" multiple disabled>
+          <span class="picker-title">Choose files</span>
+          <span class="picker-detail">Photos, videos, or documents</span>
+        </label>
+
+        <ul id="queue" class="queue" aria-live="polite" aria-label="Uploads"></ul>
+
+        <button id="done" class="done" type="button" hidden>Done</button>
+      </section>
+
+      <p class="privacy">Files move through an encrypted, temporary tunnel and expire automatically.</p>
+      <noscript>This upload portal needs JavaScript to connect to your other device.</noscript>
+    </main>
+  </body>
+</html>

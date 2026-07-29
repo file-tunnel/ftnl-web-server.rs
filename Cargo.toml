@@ -1,0 +1,16 @@
+[package]
+name = "ftnl-web-server"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Privacy-preserving mobile upload portal for File Tunnel"
+repository = "https://github.com/file-tunnel/ftnl-web-server.rs"
+
+[dependencies]
+axum = "0.8"
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
+tower-http = { version = "0.6", features = ["request-id", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["serde"] }
