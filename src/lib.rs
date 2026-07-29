@@ -58,7 +58,7 @@ async fn tunnel(Path(_tunnel_id): Path<Uuid>) -> Response {
 }
 
 async fn config(State(state): State<AppState>) -> Response {
-    let encoded = js_string(&state.api_origin);
+    let encoded = encode_runtime_config_string(&state.api_origin);
     let body = format!("globalThis.__FTNL_CONFIG__ = Object.freeze({{ apiOrigin: {encoded} }});\n");
     asset_response(
         body,
@@ -149,14 +149,14 @@ fn asset_response(
         .into_response()
 }
 
-fn js_string(value: &str) -> String {
-    let escaped = value
-        .replace('\\', "\\\\")
-        .replace('"', "\\\"")
+/// Encodes an untrusted runtime value as one JSON-compatible JavaScript string.
+#[must_use]
+pub fn encode_runtime_config_string(value: &str) -> String {
+    serde_json::to_string(value)
+        .expect("serializing a string cannot fail")
         .replace('<', "\\u003c")
         .replace('\u{2028}', "\\u2028")
-        .replace('\u{2029}', "\\u2029");
-    format!("\"{escaped}\"")
+        .replace('\u{2029}', "\\u2029")
 }
 
 #[cfg(test)]
@@ -165,9 +165,23 @@ mod tests {
 
     #[test]
     fn runtime_config_cannot_break_out_of_script_string() {
-        let encoded = js_string("</script><script>alert(1)</script>");
+        let encoded = encode_runtime_config_string("</script><script>alert(1)</script>");
         assert!(!encoded.contains('<'));
         assert!(encoded.contains("\\u003c/script>"));
+    }
+
+    proptest::proptest! {
+        #[test]
+        fn runtime_config_encoding_round_trips_every_utf8_string(value in ".*") {
+            let encoded = encode_runtime_config_string(&value);
+            let decoded: String = serde_json::from_str(&encoded).unwrap();
+            proptest::prop_assert_eq!(decoded, value);
+            proptest::prop_assert!(!encoded.contains('<'));
+            let line_separator = char::from_u32(0x2028).unwrap();
+            let paragraph_separator = char::from_u32(0x2029).unwrap();
+            proptest::prop_assert!(!encoded.contains(line_separator));
+            proptest::prop_assert!(!encoded.contains(paragraph_separator));
+        }
     }
 
     #[test]

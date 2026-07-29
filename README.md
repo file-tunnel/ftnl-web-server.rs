@@ -45,6 +45,10 @@ CORS allowlist to the exact portal origin.
 nix develop --command agent-check
 ```
 
+The dedicated formal-boundary workflow uses randomized UTF-8 inputs to prove
+that runtime configuration is JSON-round-trippable and cannot emit raw script
+terminators or JavaScript line separators.
+
 The checked-in Nix lock provides Rust, Cargo, formatters, linters, and CI
 tooling on macOS and Linux.
 

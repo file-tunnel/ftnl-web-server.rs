@@ -1,0 +1,30 @@
+name: Formal boundary properties
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: formal-boundaries-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runtime-config-encoding:
+    name: Randomized script-string safety properties
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342 # v31.11.0
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - run: >-
+          nix develop --command cargo test --locked
+          runtime_config_encoding_round_trips_every_utf8_string
