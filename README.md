@@ -23,6 +23,7 @@ The portal is intentionally small:
 Start `ftnl-backend-api.rs` on port 8080, then:
 
 ```bash
+nix develop
 cp .env.example .env
 cargo run
 ```
@@ -37,5 +38,14 @@ Open a pairing URI returned by the backend, for example
 
 Production should serve the portal only over HTTPS and configure the backend's
 CORS allowlist to the exact portal origin.
+
+## Validate
+
+```bash
+nix develop --command agent-check
+```
+
+The checked-in Nix lock provides Rust, Cargo, formatters, linters, and CI
+tooling on macOS and Linux.
 
 MIT licensed.
