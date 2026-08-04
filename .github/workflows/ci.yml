@@ -1,14 +1,18 @@
 name: portal-ci
+
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+
 permissions:
   contents: read
+
 concurrency:
   group: portal-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-24.04
@@ -17,11 +21,41 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Validate workflow syntax
+        uses: docker://rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+        with:
+          args: .github/workflows/ci.yml
       - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
         with:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-      - run: cargo fmt --check
-      - run: cargo clippy --locked --all-targets --all-features -- -D warnings
-      - run: cargo test --locked --all-targets
-      - run: cargo build --locked --release
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Check all targets
+        run: cargo check --locked --all-targets --all-features
+      - name: Strict Clippy
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - name: Unit and property tests
+        run: cargo test --locked --all-targets
+      - name: Documentation
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo doc --locked --no-deps
+      - name: Release build
+        run: cargo build --locked --release
+      - name: Enforce portal process boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f src/runtime.rs
+          test -f RUNTIME.md
+          test "$(wc -l < src/main.rs)" -le 6
+          git grep -qF 'pub async fn run' -- src/runtime.rs
+          git grep -qF 'RuntimeConfig' -- src/runtime.rs
+          git grep -qF 'with_graceful_shutdown' -- src/runtime.rs
+          git grep -qF 'The portal is a static/browser-facing Axum service.' -- RUNTIME.md
+          if git grep -nE 'TcpListener|FTNL_WEB_BIND|FTNL_API_ORIGIN|tracing_subscriber|axum::serve' -- src/main.rs; then
+            echo 'process configuration and lifecycle must remain outside src/main.rs' >&2
+            exit 1
+          fi
+          git diff --check
