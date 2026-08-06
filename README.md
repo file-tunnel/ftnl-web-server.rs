@@ -53,3 +53,38 @@ The checked-in Nix lock provides Rust, Cargo, formatters, linters, and CI
 tooling on macOS and Linux.
 
 MIT licensed.
+
+## Cross-surface delivery
+
+Changes to pairing, transfer state, progress, validation, permissions,
+notifications, imports, navigation, or deep links in this Rust mobile-web portal
+must be evaluated for the planned first-class clients:
+
+- `file-tunnel/ftnl-flutter` for Android, iOS, Flutter Web/mobile web, and
+  Flutter desktop;
+- `file-tunnel/ftnl-desktop.rs` for the native GPUI desktop app; and
+- File Tunnel interfaces, clients, transfer manifests, route types, and
+  interruption/resume fixtures.
+
+This is not automatic screen-for-screen parity. Install-free upload UX and
+browser-specific picker behavior may remain web-only. Native tray, filesystem,
+drag/drop, notifications, and background-transfer behavior may remain
+native-only. Transfer identity, capability semantics, status/progress,
+integrity, retry/resume, authorization, and user-directed navigation normally
+require coordinated work or an explicit no-change rationale and parity issue.
+
+Deep links are HTTPS-first:
+
+```text
+https://<verified-file-tunnel-owned-host>/open/<route>?<bounded-query>
+```
+
+with `ftnl://` fallback. Rust web, Flutter, and GPUI must share one versioned
+route model and support cold start, already-running delivery, authentication or
+pairing resume, replay/expiry rejection, and browser fallback. File bytes,
+absolute private paths, transfer capabilities, credentials, encryption keys,
+and bearer tokens are prohibited in URLs. Pairing and transfer handoffs use
+short-lived, single-use, audience-bound codes.
+
+See [`docs/CROSS_SURFACE_DELIVERY.md`](docs/CROSS_SURFACE_DELIVERY.md) and the
+[portfolio policy](https://github.com/ORESoftware/project-registry/blob/main/docs/cross-surface-delivery.md).
