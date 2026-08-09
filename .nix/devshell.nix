@@ -5,12 +5,15 @@ pkgs.mkShell {
   ]
   ++ (with pkgs; [
     actionlint
+    age
     cargo
     clippy
     git
+    just
     jq
     nixfmt
     openssl
+    pkgs.ores-sops
     pkg-config
     ripgrep
     rust-analyzer
@@ -18,6 +21,7 @@ pkgs.mkShell {
     rustfmt
     shellcheck
     shfmt
+    sops
   ]);
 
   LANG = if pkgs.stdenv.hostPlatform.isDarwin then "en_US.UTF-8" else "C.UTF-8";

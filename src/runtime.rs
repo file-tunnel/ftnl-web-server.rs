@@ -6,7 +6,7 @@ use tokio::net::TcpListener;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 
-use crate::{app, AppState};
+use crate::{app, observability, AppState};
 
 const DEFAULT_BIND: &str = "127.0.0.1:3000";
 const DEFAULT_API_ORIGIN: &str = "http://127.0.0.1:8080";
@@ -49,16 +49,18 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         )
         .init();
 
+    let telemetry = observability::logger();
+    observability::event(&telemetry, "web.service.starting");
     let config = RuntimeConfig::from_env()?;
     let listener = TcpListener::bind(config.address).await?;
-    info!(
-        address = %config.address,
-        api_origin = %config.api_origin,
-        "File Tunnel portal listening"
-    );
-    axum::serve(listener, app(AppState::new(config.api_origin)))
+    info!(address = %config.address, "File Tunnel portal listening");
+    observability::event(&telemetry, "web.service.listening");
+    let result = axum::serve(listener, app(AppState::new(config.api_origin)))
         .with_graceful_shutdown(shutdown())
-        .await?;
+        .await;
+    observability::event(&telemetry, "web.service.stopped");
+    let _ = telemetry.close();
+    result?;
     Ok(())
 }
 
