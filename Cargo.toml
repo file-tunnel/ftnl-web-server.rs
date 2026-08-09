@@ -8,7 +8,7 @@ repository = "https://github.com/file-tunnel/ftnl-web-server.rs"
 
 [dependencies]
 axum = "0.8"
-next-loggers = { package = "oresoftware-next-loggers", git = "https://github.com/ores-otel/ores.otel.log.git", rev = "eb656efe232fa5128d0e5b77b81224aca835e543" }
+next-loggers = { package = "oresoftware-next-loggers", git = "https://github.com/ores-otel/ores.otel.log.git", rev = "64a4ee0ed839a8de7e9ba2588899a24e25b05a65" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
