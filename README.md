@@ -39,6 +39,17 @@ Open a pairing URI returned by the backend, for example
 Production should serve the portal only over HTTPS and configure the backend's
 CORS allowlist to the exact portal origin.
 
+Production environment bundles use SOPS ciphertext in `env/enc` and ignored
+plaintext in `env/dec`. Run `nix develop --command just edit prod` only with
+freshly rotated provider credentials. Supabase publishable configuration may
+reach the portal; secret/service-role credentials must never do so.
+
+The Zed package graph imports `ftnl-lib-core` for shared generated schema
+artifacts without linking its SQL/ORM engine into the portal binary. Service
+lifecycle records use the ORES OpenTelemetry wrapper and contain constant event
+names only; request URLs, tunnel/file identifiers, capabilities, filenames,
+remote addresses, and bytes are excluded.
+
 ## Validate
 
 ```bash

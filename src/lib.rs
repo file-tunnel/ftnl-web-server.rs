@@ -1,3 +1,4 @@
+mod observability;
 pub mod runtime;
 
 use std::sync::Arc;
@@ -192,5 +193,11 @@ mod tests {
             .parse::<Uuid>()
             .is_ok());
         assert!("not-a-tunnel".parse::<Uuid>().is_err());
+    }
+
+    #[test]
+    fn zed_package_declares_the_schema_tooling_boundary() {
+        let manifest = include_str!("../.zpkg.toml");
+        assert!(manifest.contains("\"file-tunnel/ftnl-lib-core\" = \"^0.1.0\""));
     }
 }
