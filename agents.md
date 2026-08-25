@@ -5,6 +5,9 @@ These instructions apply to this repository and every directory beneath it.
 ## Repository role
 
 - This repository owns the install-free mobile upload portal.
+- The optional `ftnl-control-web` binary is a separate account-authenticated,
+  metadata-only surface. Its database, API, TCP, and NATS providers must never
+  enter the anonymous portal runtime or receive pairing/capability material.
 - Read the one-time pairing secret only from the URI fragment, scrub it from
   the visible URL before network activity, and exchange it for a phone-scoped
   capability.

@@ -1,3 +1,4 @@
+pub mod control;
 mod observability;
 pub mod runtime;
 

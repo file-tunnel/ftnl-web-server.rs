@@ -50,6 +50,22 @@ lifecycle records use the ORES OpenTelemetry wrapper and contain constant event
 names only; request URLs, tunnel/file identifiers, capabilities, filenames,
 remote addresses, and bytes are excluded.
 
+## Account control web
+
+The separate `ftnl-control-web` binary provides Shared Auth protected,
+metadata-only full SSR, pagelet, and island surfaces. It can use one explicitly
+configured backend mode: direct SELECT-only Postgres projection, stateless
+HTTPS, bounded persistent TCP, or asynchronous NATS request/reply. It never
+falls back between modes and does not alter the anonymous upload portal's
+no-database/no-broker runtime boundary.
+
+The official pinned `shared-auth-lib` guard preserves anonymous,
+unauthenticated, authenticated, and degraded outcomes; protected operations
+fail closed. Product authorization remains separate from authentication. ORES
+helpers bound correlation IDs and redact sensitive diagnostic fields. See
+[`docs/control-web.md`](docs/control-web.md) for configuration, transport
+security, and JetStream/outbox semantics.
+
 ## Validate
 
 ```bash

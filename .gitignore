@@ -1,4 +1,7 @@
 /target/
+/.vendor/
+/zed_modules/
+/.zed/
 .DS_Store
 .cache/
 .direnv/
