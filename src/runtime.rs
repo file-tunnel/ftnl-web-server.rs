@@ -1,12 +1,12 @@
 //! Process configuration and lifecycle for the File Tunnel portal.
 
-use std::{env, net::SocketAddr};
+use std::net::SocketAddr;
 
 use tokio::net::TcpListener;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
 
-use crate::{app, observability, AppState};
+use crate::{app, flags, observability, AppState};
 
 const DEFAULT_BIND: &str = "127.0.0.1:3000";
 const DEFAULT_API_ORIGIN: &str = "http://127.0.0.1:8080";
@@ -28,9 +28,9 @@ impl RuntimeConfig {
         })
     }
 
-    fn from_env() -> Result<Self, std::net::AddrParseError> {
-        let bind = env::var("FTNL_WEB_BIND").ok();
-        let api_origin = env::var("FTNL_API_ORIGIN").ok();
+    fn from_flags() -> Result<Self, std::net::AddrParseError> {
+        let bind = flags::var("FTNL_WEB_BIND").ok();
+        let api_origin = flags::var("FTNL_API_ORIGIN").ok();
         Self::from_values(bind.as_deref(), api_origin.as_deref())
     }
 }
@@ -42,16 +42,20 @@ impl RuntimeConfig {
 /// Returns an error when the configured bind address is malformed, the socket
 /// cannot bind, or the Axum server exits unexpectedly.
 pub async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    if let Some(output) = flags::process_control().map_err(std::io::Error::other)? {
+        print!("{output}");
+        return Ok(());
+    }
     tracing_subscriber::fmt()
-        .with_env_filter(
-            EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| EnvFilter::new("ftnl_web_server=info,tower_http=info")),
-        )
+        .with_env_filter(EnvFilter::try_new(
+            flags::var("RUST_LOG")
+                .unwrap_or_else(|_| "ftnl_web_server=info,tower_http=info".into()),
+        )?)
         .init();
 
     let telemetry = observability::logger();
     observability::event(&telemetry, "web.service.starting");
-    let config = RuntimeConfig::from_env()?;
+    let config = RuntimeConfig::from_flags()?;
     let listener = TcpListener::bind(config.address).await?;
     info!(address = %config.address, "File Tunnel portal listening");
     observability::event(&telemetry, "web.service.listening");

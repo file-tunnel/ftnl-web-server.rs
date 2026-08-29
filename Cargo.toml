@@ -10,6 +10,7 @@ repository = "https://github.com/file-tunnel/ftnl-web-server.rs"
 async-nats = "0.46"
 async-trait = "0.1"
 axum = "0.8"
+flags2env = { version = "0.1.0", git = "https://github.com/flags-2-env/flags-2-env", rev = "d7bad9ea7dfc657653368237e08903514cdca1ec" }
 ftnl-interfaces = { git = "https://github.com/file-tunnel/ftnl-interfaces.git", rev = "ba3f5d9f95a2ceee5fcf1516d7108e065813967a" }
 futures-util = "0.3"
 maud = { version = "0.27", features = ["axum"] }
@@ -23,6 +24,8 @@ shared-auth-lib = { git = "https://github.com/shared-auth/shared-auth-lib.git", 
 thiserror = "2"
 tokio = { version = "1", features = ["io-util", "macros", "net", "rt-multi-thread", "signal", "sync", "time"] }
 tokio-util = { version = "0.7", features = ["codec"] }
+tempfile = "3"
+toml = "0.8"
 tower-http = { version = "0.7", features = ["request-id", "trace"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

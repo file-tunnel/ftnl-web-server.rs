@@ -1,4 +1,5 @@
 pub mod control;
+pub mod flags;
 mod observability;
 pub mod runtime;
 
