@@ -25,6 +25,9 @@
     connection.textContent = "Connection unavailable";
   };
 
+  // P2 is the portal's only data path: the browser calls the authoritative API directly.
+  // Keep capability scope, deadlines, idempotency/retry, and payload bounds aligned with
+  // docs/web-api-data-access.md; failures never fall back to a database, P3, or broker path.
   const request = async (path, options = {}) => {
     const headers = new Headers(options.headers);
     if (capability) headers.set("authorization", `Bearer ${capability}`);
