@@ -14,6 +14,7 @@ url = "https://github.com/file-tunnel/ftnl-web-server.rs"
 # The portal consumes generated/shared schema artifacts through the Zed package
 # graph. It does not link the SQL/ORM engine into the request-serving binary.
 [dependencies]
+"file-tunnel/ftnl-orm-core" = "^0.1.0"
 "file-tunnel/ftnl-interfaces" = "^0.1.0"
 "file-tunnel/ftnl-lib-core" = "^0.1.0"
 "shared-auth/shared-auth-lib" = "^0.1.0"
