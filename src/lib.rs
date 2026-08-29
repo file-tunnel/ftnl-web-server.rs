@@ -1,3 +1,4 @@
+pub mod web_api_plane;
 pub mod control;
 mod observability;
 pub mod runtime;
@@ -44,6 +45,7 @@ pub fn app(state: AppState) -> Router {
         .route("/assets/app.css", get(css))
         .route("/manifest.webmanifest", get(manifest))
         .route("/healthz", get(health))
+            .route("/v1/data-plane/capabilities", axum::routing::get(|| async { axum::Json(crate::web_api_plane::capabilities()) }))
         .layer(PropagateRequestIdLayer::x_request_id())
         .layer(SetRequestIdLayer::new(
             header::HeaderName::from_static("x-request-id"),

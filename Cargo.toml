@@ -7,6 +7,7 @@ description = "Privacy-preserving mobile upload portal for File Tunnel"
 repository = "https://github.com/file-tunnel/ftnl-web-server.rs"
 
 [dependencies]
+k8s-web-api-data-plane = { git = "https://github.com/ORESoftware/k8s-libs-and-shared-defs.git", rev = "55adadc9f6d223d40b28ae66097dfe16930951b1", package = "k8s-web-api-data-plane" }
 async-nats = "0.46"
 async-trait = "0.1"
 axum = "0.8"
