@@ -29,3 +29,17 @@ temp/worktrees
 # only env/enc/*.env.enc (sops ciphertext) is tracked. See env/README.md.
 **/**/*.env
 env/dec
+
+
+# BEGIN ores-sops dotenv policy
+*.env
+*/*.env
+*/**/*.env
+.env.*
+*.env.*
+!.env.example
+/env/dec/
+/env/enc/*
+!/env/enc/dev.env.enc
+!/env/enc/prod.env.enc
+# END ores-sops dotenv policy
