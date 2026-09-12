@@ -76,9 +76,15 @@ async fn version() -> Response {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Mutex;
+
+    // READY and DRAINING are process-global and cargo runs tests on parallel
+    // threads, so every test that writes them holds this lock throughout.
+    static PROBE_STATE: Mutex<()> = Mutex::new(());
 
     #[test]
     fn readiness_fails_closed_once_drain_starts() {
+        let _guard = PROBE_STATE.lock().unwrap_or_else(|e| e.into_inner());
         set_ready(true);
         assert!(is_ready());
         begin_drain();
@@ -88,6 +94,7 @@ mod tests {
 
     #[test]
     fn readiness_fails_closed_until_dependencies_are_declared() {
+        let _guard = PROBE_STATE.lock().unwrap_or_else(|e| e.into_inner());
         DRAINING.store(false, Ordering::Release);
         set_ready(false);
         assert!(!is_ready());

@@ -3,6 +3,7 @@ pub mod control;
 pub mod flags;
 mod observability;
 pub mod runtime;
+pub mod ores_probes;
 
 use std::sync::Arc;
 
