@@ -1,0 +1,14 @@
+# GENERATED from Dockerfile (sha256:c036d3c5f6d19fab) by ores-gha-workflows/scripts/render-dkf.mjs — target linux/amd64. Do not edit; edit Dockerfile and re-render.
+FROM --platform=linux/amd64 rust:1.96-bookworm AS build
+ARG TARGETARCH
+WORKDIR /src
+COPY Cargo.toml Cargo.lock* ./
+COPY src ./src
+COPY web ./web
+RUN cargo build --locked --release
+
+FROM --platform=linux/amd64 gcr.io/distroless/cc-debian12:nonroot
+COPY --from=build /src/target/release/ftnl-web-server /usr/local/bin/ftnl-web-server
+EXPOSE 3000
+ENV FTNL_WEB_BIND=0.0.0.0:3000
+ENTRYPOINT ["/usr/local/bin/ftnl-web-server"]

@@ -20,11 +20,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1786384358,
-        "narHash": "sha256-RzPPiWeUtuvymnpuEWsdtzli5w4kjZs49FqEs3/1u+I=",
+        "lastModified": 1788614874,
+        "narHash": "sha256-7QYjT2vHLuX9Z1pdxHXDKCbh1CR3D/2rywB9Tx0MPRg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2fcb964de67fcf60b43471c55d5d99e61a9ccb5a",
+        "rev": "c043004d1c6985732bcc1cbc5a9c9aecbbb4e0f0",
         "type": "github"
       },
       "original": {
@@ -56,11 +56,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1786221615,
-        "narHash": "sha256-lKS5/N9//ig7xA8ypKqDNBdpqfD+Bdv4gsc3BESDXRA=",
+        "lastModified": 1788457530,
+        "narHash": "sha256-QIIaqnwoHiYm4m658M11HssOhLQcGN4gW6ptu5fViGY=",
         "owner": "ORESoftware",
         "repo": "ores-sops",
-        "rev": "791739c60a42fd43d5879f9f088628253179d466",
+        "rev": "50ea46d109a9467c2247c6bc1eba63471c1a304f",
         "type": "github"
       },
       "original": {
