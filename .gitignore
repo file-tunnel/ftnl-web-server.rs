@@ -43,3 +43,6 @@ env/dec
 !/env/enc/dev.env.enc
 !/env/enc/prod.env.enc
 # END ores-sops dotenv policy
+
+# typespec-json-schema-validator comparison evidence (generated; never an authority)
+.typespec-json-schema-validator/
