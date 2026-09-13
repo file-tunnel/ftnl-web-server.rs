@@ -16,10 +16,10 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use axum::{
-    Json, Router,
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::get,
+    Json, Router,
 };
 use serde_json::json;
 
@@ -52,11 +52,8 @@ pub fn router<S>() -> Router<S>
 where
     S: Clone + Send + Sync + 'static,
 {
-    Router::new()
-        .route("/version", get(version))
+    Router::new().route("/version", get(version))
 }
-
-
 
 async fn version() -> Response {
     (

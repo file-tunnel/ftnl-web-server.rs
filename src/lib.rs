@@ -2,8 +2,8 @@ pub mod web_api_plane;
 pub mod control;
 pub mod flags;
 mod observability;
-pub mod runtime;
 pub mod ores_probes;
+pub mod runtime;
 
 use std::sync::Arc;
 
