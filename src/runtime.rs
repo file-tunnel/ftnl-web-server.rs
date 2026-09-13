@@ -1,5 +1,8 @@
 //! Process configuration and lifecycle for the File Tunnel portal.
 
+#[path = "../.vendor/.zed/oresoftware/ores-sw/rust/axum08.rs"]
+mod ores_sw_axum;
+
 use std::net::SocketAddr;
 
 use tokio::net::TcpListener;
@@ -59,7 +62,8 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let listener = TcpListener::bind(config.address).await?;
     info!(address = %config.address, "File Tunnel portal listening");
     observability::event(&telemetry, "web.service.listening");
-    let result = axum::serve(listener, app(AppState::new(config.api_origin)))
+    let app = ores_sw_axum::install(app(AppState::new(config.api_origin)));
+    let result = axum::serve(listener, app)
         .with_graceful_shutdown(shutdown())
         .await;
     observability::event(&telemetry, "web.service.stopped");
