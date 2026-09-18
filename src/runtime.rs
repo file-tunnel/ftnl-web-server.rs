@@ -42,6 +42,7 @@ impl RuntimeConfig {
 /// Returns an error when the configured bind address is malformed, the socket
 /// cannot bind, or the Axum server exits unexpectedly.
 pub async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    const ROUTINE_ID: &str = "ores-routine--JRYfaaLd_J-uExhfvdSK";
     if let Some(output) = flags::process_control().map_err(std::io::Error::other)? {
         print!("{output}");
         return Ok(());
@@ -54,15 +55,34 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         .init();
 
     let telemetry = observability::logger();
-    observability::event(&telemetry, "web.service.starting");
+    let _ = observability::event(&telemetry, "web.service.starting")
+        .add_trace("ores-trace-noLbIyIbkJ7VxQWj5Sqms", false)
+        .add_routine_id(ROUTINE_ID)
+        .send();
     let config = RuntimeConfig::from_flags()?;
-    let listener = TcpListener::bind(config.address).await?;
+    let listener = match TcpListener::bind(config.address).await {
+        Ok(listener) => listener,
+        Err(error) => {
+            let _ = observability::failure(&telemetry, "web.service.bind_failed")
+                .add_trace("ores-trace-ctCjbaJJs1OM9A16NOD_n", false)
+                .add_routine_id(ROUTINE_ID)
+                .send();
+            let _ = telemetry.close();
+            return Err(error.into());
+        }
+    };
     info!(address = %config.address, "File Tunnel portal listening");
-    observability::event(&telemetry, "web.service.listening");
+    let _ = observability::event(&telemetry, "web.service.listening")
+        .add_trace("ores-trace-wrT-8HASp1JAQO0pc4Xc8", false)
+        .add_routine_id(ROUTINE_ID)
+        .send();
     let result = axum::serve(listener, app(AppState::new(config.api_origin)))
         .with_graceful_shutdown(shutdown())
         .await;
-    observability::event(&telemetry, "web.service.stopped");
+    let _ = observability::event(&telemetry, "web.service.stopped")
+        .add_trace("ores-trace-yqZ4GMmIR79W40dIVarsX", false)
+        .add_routine_id(ROUTINE_ID)
+        .send();
     let _ = telemetry.close();
     result?;
     Ok(())
