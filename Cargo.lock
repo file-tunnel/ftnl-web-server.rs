@@ -648,6 +648,7 @@ dependencies = [
  "flags2env",
  "ftnl-interfaces",
  "futures-util",
+ "k8s-web-api-data-plane",
  "maud",
  "ores-lib-core",
  "oresoftware-next-loggers",
@@ -1127,6 +1128,17 @@ dependencies = [
  "serde",
  "serde_json",
  "simple_asn1",
+]
+
+[[package]]
+name = "k8s-web-api-data-plane"
+version = "0.1.0"
+source = "git+https://github.com/ORESoftware/k8s-libs-and-shared-defs.git?rev=55adadc9f6d223d40b28ae66097dfe16930951b1#55adadc9f6d223d40b28ae66097dfe16930951b1"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror 2.0.20",
+ "url",
 ]
 
 [[package]]
