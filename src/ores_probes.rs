@@ -28,7 +28,9 @@ pub const SERVICE: &str = "ftnl-web-server";
 /// Version of the probe contract these routes implement.
 pub const CONTRACT_VERSION: &str = "ores.service.runtime.v1";
 
-static READY: AtomicBool = AtomicBool::new(true);
+// Readiness starts closed. A process that has not yet proved its dependencies
+// usable must not be routable, so the flag opens only through `set_ready(true)`.
+static READY: AtomicBool = AtomicBool::new(false);
 static DRAINING: AtomicBool = AtomicBool::new(false);
 
 /// Declare whether the service's dependency checks have passed.
