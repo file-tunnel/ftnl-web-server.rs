@@ -2,6 +2,7 @@ pub mod web_api_plane;
 pub mod control;
 pub mod flags;
 mod observability;
+pub mod ores_probes;
 pub mod runtime;
 
 use std::sync::Arc;
@@ -39,6 +40,7 @@ impl AppState {
 
 pub fn app(state: AppState) -> Router {
     Router::new()
+        .merge(crate::ores_probes::router())
         .route("/", get(index))
         .route("/t/{tunnel_id}", get(tunnel))
         .route("/config.js", get(config))
