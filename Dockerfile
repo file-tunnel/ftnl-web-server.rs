@@ -29,7 +29,13 @@ COPY . .
 RUN --mount=type=cache,target=/usr/local/cargo/registry,id=cargo-registry,sharing=locked \
     --mount=type=cache,target=/usr/local/cargo/git,id=cargo-git,sharing=locked \
     --mount=type=cache,target=/src/target,id=ftnl-web-server-target-${TARGETARCH},sharing=locked \
-    cargo build --release --locked --bin ftnl-web-server \
+    --mount=type=secret,id=github_token \
+    token="$(cat /run/secrets/github_token)" \
+    && export CARGO_NET_GIT_FETCH_WITH_CLI=true \
+    && export GIT_CONFIG_COUNT=1 \
+    && export GIT_CONFIG_KEY_0="url.https://x-access-token:${token}@github.com/ORESoftware/k8s-libs-and-shared-defs.insteadOf" \
+    && export GIT_CONFIG_VALUE_0="https://github.com/ORESoftware/k8s-libs-and-shared-defs" \
+    && cargo build --release --locked --bin ftnl-web-server \
     && strip "target/release/ftnl-web-server" \
     && cp "target/release/ftnl-web-server" "/usr/local/bin/ftnl-web-server"
 

@@ -43,6 +43,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Mint least-privilege k8s dependency token
+        id: k8s-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349
+        with:
+          app-id: ${{ vars.PORTFOLIO_GITHUB_APP_ID }}
+          private-key: ${{ secrets.PORTFOLIO_GITHUB_APP_PRIVATE_KEY }}
+          owner: ORESoftware
+          repositories: k8s-libs-and-shared-defs
+          permission-contents: read
+
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a # v4.3.0
         with:
@@ -82,6 +93,8 @@ jobs:
           cache-to: type=gha,mode=max,scope=portal
           provenance: mode=max
           sbom: true
+          secrets: |
+            github_token=${{ steps.k8s-token.outputs.token }}
 
       - name: Install cosign
         if: github.event_name != 'pull_request'
