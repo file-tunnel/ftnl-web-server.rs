@@ -18,8 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with: { ref: '${{ env.EXPECTED_HEAD }}', persist-credentials: false }
+      - name: Mint least-privilege ores-cli read token
+        id: ores-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349
+        with:
+          app-id: ${{ vars.PORTFOLIO_GITHUB_APP_ID }}
+          private-key: ${{ secrets.PORTFOLIO_GITHUB_APP_PRIVATE_KEY }}
+          owner: ORESoftware
+          repositories: ores-cli
+          permission-contents: read
       - name: Build pinned tools and execute authored contracts
         shell: bash
+        env:
+          ZED_PKG_GITHUB_TOKEN: ${{ steps.ores-token.outputs.token }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"; test -f .zpkg.toml; test -f .cli-flags.toml
