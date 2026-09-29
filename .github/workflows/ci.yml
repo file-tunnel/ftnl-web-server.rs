@@ -25,6 +25,22 @@ jobs:
         uses: docker://rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
         with:
           args: .github/workflows/ci.yml
+      - name: Mint least-privilege k8s dependency token
+        id: k8s-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349
+        with:
+          app-id: ${{ vars.PORTFOLIO_GITHUB_APP_ID }}
+          private-key: ${{ secrets.PORTFOLIO_GITHUB_APP_PRIVATE_KEY }}
+          owner: ORESoftware
+          repositories: k8s-libs-and-shared-defs
+          permission-contents: read
+      - name: Configure private k8s dependency credentials
+        shell: bash
+        env:
+          K8S_TOKEN: ${{ steps.k8s-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          git config --global url."https://x-access-token:${K8S_TOKEN}@github.com/ORESoftware/k8s-libs-and-shared-defs".insteadOf "https://github.com/ORESoftware/k8s-libs-and-shared-defs"
       - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
         with:
           components: rustfmt, clippy
@@ -59,3 +75,8 @@ jobs:
             exit 1
           fi
           git diff --check
+
+      - name: Remove private dependency credentials
+        if: always()
+        shell: bash
+        run: git config --global --unset-all 'url.https://x-access-token:${{ steps.k8s-token.outputs.token }}@github.com/ORESoftware/k8s-libs-and-shared-defs.insteadOf' || true
