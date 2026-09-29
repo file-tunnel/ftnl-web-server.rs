@@ -22,6 +22,22 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Mint least-privilege k8s dependency token
+        id: k8s-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349
+        with:
+          app-id: ${{ vars.PORTFOLIO_GITHUB_APP_ID }}
+          private-key: ${{ secrets.PORTFOLIO_GITHUB_APP_PRIVATE_KEY }}
+          owner: ORESoftware
+          repositories: k8s-libs-and-shared-defs
+          permission-contents: read
+      - name: Configure private k8s dependency credentials
+        shell: bash
+        env:
+          K8S_TOKEN: ${{ steps.k8s-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          git config --global url."https://x-access-token:${K8S_TOKEN}@github.com/ORESoftware/k8s-libs-and-shared-defs".insteadOf "https://github.com/ORESoftware/k8s-libs-and-shared-defs"
       - name: Install Nix
         uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
       - name: Check Nix formatting
@@ -35,3 +51,8 @@ jobs:
         run: nix flake check --print-build-logs
       - name: Run repository checks
         run: nix develop --command agent-check
+
+      - name: Remove private dependency credentials
+        if: always()
+        shell: bash
+        run: git config --global --unset-all 'url.https://x-access-token:${{ steps.k8s-token.outputs.token }}@github.com/ORESoftware/k8s-libs-and-shared-defs.insteadOf' || true
