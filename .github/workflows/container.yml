@@ -43,13 +43,24 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Mint least-privilege k8s dependency token
+        id: k8s-token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349
+        with:
+          app-id: ${{ vars.PORTFOLIO_GITHUB_APP_ID }}
+          private-key: ${{ secrets.PORTFOLIO_GITHUB_APP_PRIVATE_KEY }}
+          owner: ORESoftware
+          repositories: k8s-libs-and-shared-defs
+          permission-contents: read
+
+
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a # v4.3.0
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
         with:
           platforms: arm64
 
       - name: Set up BuildKit
-        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Authenticate to GHCR
         if: github.event_name != 'pull_request'
@@ -71,7 +82,7 @@ jobs:
 
       - name: Build and publish
         id: build
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: .
           platforms: linux/amd64,linux/arm64
@@ -82,6 +93,8 @@ jobs:
           cache-to: type=gha,mode=max,scope=portal
           provenance: mode=max
           sbom: true
+          secrets: |
+            github_token=${{ steps.k8s-token.outputs.token }}
 
       - name: Install cosign
         if: github.event_name != 'pull_request'
