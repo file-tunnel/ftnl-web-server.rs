@@ -17,11 +17,11 @@ url = "https://github.com/file-tunnel/ftnl-web-server.rs"
 "flags-2-env/flags-2-env" = "^0.3.0"
 "file-tunnel/ftnl-orm-core" = "^0.1.0"
 "file-tunnel/ftnl-interfaces" = "^0.1.0"
-"file-tunnel/ftnl-orm-core" = "^0.1.0"
 "file-tunnel/ftnl-lib-core" = "^0.1.0"
 "shared-auth/shared-auth-lib" = "^0.1.0"
 "ores-otel/ores-lib-core" = "^0.1.0"
 "oresoftware/next-loggers" = "^0.1.0"
+"oresoftware/ores-sw" = "^0.1.0"
 
 [build]
 command = "cargo build --release --locked"
