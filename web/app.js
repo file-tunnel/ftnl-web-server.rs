@@ -3,7 +3,9 @@
 
   const config = globalThis.__FTNL_CONFIG__;
   const tunnelId = location.pathname.match(/^\/t\/([0-9a-f-]{36})$/i)?.[1];
-  const secret = new URLSearchParams(location.hash.slice(1)).get("c");
+  // Parse the canonical fragment directly. URLSearchParams.get() would
+  // silently accept duplicate c fields and normalize encoded aliases.
+  const secret = /^#c=([A-Za-z0-9_-]{32,512})$/.exec(location.hash)?.[1] ?? null;
   const sessionKey = tunnelId ? `ftnl.phone.${tunnelId}` : "";
   const filesInput = document.querySelector("#files");
   const picker = document.querySelector("#picker");

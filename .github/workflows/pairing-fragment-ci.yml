@@ -1,0 +1,34 @@
+name: pairing-fragment-ci
+
+on:
+  pull_request:
+    paths:
+      - 'web/app.js'
+      - 'test/web-pairing-fragment.test.mjs'
+      - '.github/workflows/pairing-fragment-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'web/app.js'
+      - 'test/web-pairing-fragment.test.mjs'
+      - '.github/workflows/pairing-fragment-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pairing-fragment:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+      - name: Validate browser-script syntax
+        run: node --check web/app.js
+      - name: Test capability fragment parsing without private dependencies
+        run: node --test test/web-pairing-fragment.test.mjs
